@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Touristic Sites</title>
+
+    <link href="style.css" rel="stylesheet">
+
+    <!-- For google icons  -->
+    <script src="https://kit.fontawesome.com/667417c7ec.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <button id="new_site" type="button">New Site</button>
+
+    <div id="site-form">
+        <div class="tabs">
+            <h2 class="site-tab active" id="site-tab">Site</h2>
+        </div>
+
+        <p class="msg" id="all_msg">Please fill the form !!!</p>
+        <p class="msg" id="name_msg">Please enter the name !!!</p>
+        <p class="msg" id="long_msg">Please enter the longitude !!!</p>
+        <p class="msg" id="lati_msg">Please enter the latitude !!!</p>
+
+        <form action="">
+            <input type="text" name="name" id="name" placeholder="name">
+            <input type="number" name="long" id="long" placeholder="longitude">
+            <input type="email" name="lati" id="lati" placeholder="latitude">
+            
+            <button id="save" type="button">Save</button>
+            <button id="exit" type="button">Close</button>
+        </form>
+    </div>
+    
+
+    <script>
+        const site_form = document.getElementById("site-form");
+
+        const new_site = document.getElementById("new_site");
+        
+        const msg = document.getElementsByClassName("msg");
+        const name_msg = document.getElementById('name_msg');
+        const long_msg = document.getElementById('long_msg');
+        const lati_msg = document.getElementById('lati_msg');
+
+        const save = document.getElementById('save');
+        const exit = document.getElementById('exit');
+
+        new_site.addEventListener('click', (e) => {
+            site_form.style.display = 'block';
+        })
+
+        exit.addEventListener('click', (e) => {
+            site_form.style.display = 'none';
+        })
+
+        save.addEventListener('click', (e) => {
+            const name = document.getElementById('name')
+            const long = document.getElementById('long')
+            const lati = document.getElementById('lati')
+           
+            if (name.value === '' && long.value === '' && lati.value === '') {
+                e.preventDefault();
+                all_msg.style.visibility = "visible"
+                all_msg.style.display = "block"
+            } else if (name.value === '') {
+                e.preventDefault();
+                name_msg.style.visibility = "visible"
+                name_msg.style.display = "block"
+            } else if (long.value === '') {
+                e.preventDefault();
+                long_msg.style.visibility = "visible"
+                long_msg.style.display = "block"
+            } else if (lati.value === '') {
+                e.preventDefault();
+                lati_msg.style.visibility = "visible"
+                lati_msg.style.display = "block"
+            } else {
+                alert("Site Successfuly Created");
+            }
+        })
+
+        setTimeout(function () {
+            for (var i = 0; i < msg.length; i++){
+                msg[i].style.visibility = 'hidden';
+                msg[i].style.display = 'none';
+            }
+        }, 5000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login / Registration</title>
+
+    <link href="style.css" rel="stylesheet">
+
+    <!-- For google icons  -->
+    <script src="https://kit.fontawesome.com/667417c7ec.js" crossorigin="anonymous"></script>
+</head>
+<script src="dist/sql-wasm.js"></script>
+  <script>
+    config = {
+      locateFile: filename => "dist/sql-wasm.wasm"
+    }
+    // The `initSqlJs` function is globally provided by all of the main dist files if loaded in the browser.
+    // We must specify this locateFile function if we are loading a wasm file from anywhere other than the current html page's folder.
+    initSqlJs(config).then(function(SQL){
+      //Create the database
+      const db = new SQL.Database();
+      // Run a query without reading the results
+      db.run("CREATE TABLE test (col1, col2);");
+      // Insert two rows: (1,111) and (2,222)
+      db.run("INSERT INTO test VALUES (?,?), (?,?)", [1,111,2,222]);
+
+      // Prepare a statement
+      const stmt = db.prepare("SELECT * FROM test WHERE col1 BETWEEN $start AND $end");
+      stmt.getAsObject({$start:1, $end:1}); // {col1:1, col2:111}
+
+      // Bind new values
+      stmt.bind({$start:1, $end:2});
+      while(stmt.step()) { //
+        const row = stmt.getAsObject();
+        console.log('Here is a row: ' + JSON.stringify(row));
+      }
+    });
+  </script>
+<body>
+    <div class="container">
+
+        <i id="account" class="fas fa-users"></i>
+        <div class="tabs">
+            <h2 class="reg-tab" id="reg-tab">Register</h2>
+            <h2 class="login-tab active" id="login-tab">Login</h2>
+        </div>
+
+        <p class="msg" id="all_msg">Please fill the form !!!</p>
+        <p class="msg" id="name_msg">Please enter the name !!!</p>
+        <p class="msg" id="username_msg">Please enter the username !!!</p>
+        <p class="msg" id="email_msg">Please enter the email !!!</p>
+        <p class="msg" id="pass_msg">Please enter the password !!!</p>
+        <p class="msg" id="match_msg">Password didn't match !!!</p>
+        
+        <div id="login-form">
+            <form action="">
+                <input type="text" name="username" id="login_username" placeholder="username">
+                <input type="password" name="pass" id="login_pass" placeholder="password">
+                <div class="options">
+                    <div class="remember">
+                        <input type="checkbox" name="rem" id="rem">
+                        <p>Remember Me</p>
+                    </div>
+                    <a href="#">Forget Password ?</a>
+                </div>
+                <button id="login" type="button">Login</button>
+            </form>
+        </div>
+
+        <div id="registration-form">
+            <form action="">
+                <input type="text" name="name" id="name" placeholder="name">
+                <input type="text" name="username" id="username" placeholder="username">
+                <input type="email" name="email" id="email" placeholder="email">
+                <input type="password" name="pass" id="pass" placeholder="password">
+                <input type="password" name="confirm-pass" id="confirm_pass" placeholder=" confirm password">
+                <div class="tnc">
+                    <input type="checkbox" name="accept" id="accept">
+                    <p>I accept the <a href="#">Terms & Conditions</a></p>
+                </div>
+                <button id="register" type="button">Register</button>
+            </form>
+        </div>
+
+    </div>
+    
+
+    <script>
+        const reg_form = document.getElementById("registration-form");
+        const login_form = document.getElementById("login-form");
+
+        const reg_tab = document.getElementById("reg-tab");
+        const login_tab = document.getElementById("login-tab");
+
+        const msg = document.getElementsByClassName("msg");
+        const all_msg = document.getElementById('all_msg');
+        const name_msg = document.getElementById('name_msg');
+        const username_msg = document.getElementById('username_msg');
+        const email_msg = document.getElementById('email_msg');
+        const pass_msg = document.getElementById('pass_msg');
+        const match_msg = document.getElementById('match_msg');
+
+        const register = document.getElementById('register');
+        const login = document.getElementById('login');
+
+        reg_tab.addEventListener('click', (e) => {
+            login_form.style.display = 'none';
+            reg_form.style.display = 'block';
+            reg_tab.classList.add('active');
+            login_tab.classList.remove('active');
+        })
+
+        login_tab.addEventListener('click', (e) => {
+            login_form.style.display = 'block';
+            reg_form.style.display = 'none';
+            reg_tab.classList.remove('active');
+            login_tab.classList.add('active');
+        })
+
+        
+        register.addEventListener('click', (e) => {
+            const name = document.getElementById('name')
+            const username = document.getElementById('username')
+            const email = document.getElementById('email')
+            const pass = document.getElementById('pass')
+            const confirm_pass = document.getElementById('confirm_pass')
+
+            if (name.value === '' && username.value === '' && email.value === '' && pass.value === '') {
+                e.preventDefault();
+                all_msg.style.visibility = "visible"
+                all_msg.style.display = "block"
+            } else if (name.value === '') {
+                e.preventDefault();
+                name_msg.style.visibility = "visible"
+                name_msg.style.display = "block"
+            } else if (username.value === '') {
+                e.preventDefault();
+                username_msg.style.visibility = "visible"
+                username_msg.style.display = "block"
+            } else if (email.value === '') {
+                e.preventDefault();
+                email_msg.style.visibility = "visible"
+                email_msg.style.display = "block"
+            } else if (pass.value === '') {
+                e.preventDefault();
+                pass_msg.style.visibility = "visible"
+                pass_msg.style.display = "block"
+            } else if (pass.value !== confirm_pass.value) {
+                e.preventDefault();
+                match_msg.style.visibility = "visible"
+                match_msg.style.display = "block"
+            } else {
+                alert("User Successfuly Registered");
+            }
+        })
+
+        login.addEventListener('click', (e) => {
+            const username = document.getElementById('login_username');
+            const pass = document.getElementById('login_pass');
+
+            if (username.value === '' && pass.value === '') {
+                e.preventDefault();
+                all_msg.style.visibility = "visible"
+                all_msg.style.display = "block"
+            } else if (username.value === '') {
+                e.preventDefault();
+                username_msg.style.visibility = "visible"
+                username_msg.style.display = "block"
+            } else if (pass.value === '') {
+                e.preventDefault();
+                pass_msg.style.visibility = "visible"
+                pass_msg.style.display = "block"
+            } else {
+                window.location = "home.html";
+            }
+        })
+    
+        setTimeout(function () {
+            for (var i = 0; i < msg.length; i++){
+                msg[i].style.visibility = 'hidden';
+                msg[i].style.display = 'none';
+            }
+        }, 5000);
+    </script>
+</body>
+
+</html>
